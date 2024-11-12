@@ -374,6 +374,7 @@ from .math import (  # noqa: F401
     remainder_,
     renorm,
     renorm_,
+    right_shift,
     round,
     round_,
     rsqrt,
