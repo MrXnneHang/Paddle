@@ -324,6 +324,7 @@ from .math import (  # noqa: F401
     lcm_,
     ldexp,
     ldexp_,
+    left_shift,
     lerp,
     lerp_,
     lgamma,
@@ -857,4 +858,6 @@ magic_method_func = [
     ('__or__', 'bitwise_or'),
     ('__xor__', 'bitwise_xor'),
     ('__invert__', 'bitwise_not'),
+    ('__lshift__', 'left_shift'),
+    ('__rshift__', 'right_shift'),
 ]
