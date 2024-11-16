@@ -157,3 +157,12 @@ repos:
         language: python
         files: test/white_list/pir_op_test_white_list
         args: []
+# Typos
+-   repo: https://github.com/crate-ci/typos
+    rev: v1.27.3
+    hooks:
+    -   id: typos
+        verbose: true
+        args: ['--format', 'brief']
+        pass_filenames: true  # only pass file name in git add this time
+        entry: bash ./tools/codestyle/get_staged_files.sh  # get file_names in staging area
