@@ -57,6 +57,52 @@ def create_test_class(op_type, typename, callback, check_pir=False):
     globals()[cls_name] = Cls
 
 
+def create_unitest_class_with_complex(
+    op_type, typename, callback, check_pir=False
+):
+    class Cls(unittest.TestCase):
+        def setUp(self):
+            self.a_real_np = numpy.random.random(size=(10, 7)).astype(
+                typename[0]
+            )
+            self.a_imag_np = numpy.random.random(size=(10, 7)).astype(
+                typename[0]
+            )
+            self.b_real_np = numpy.random.random(size=(10, 7)).astype(
+                typename[0]
+            )
+            self.b_imag_np = numpy.random.random(size=(10, 7)).astype(
+                typename[0]
+            )
+            self.callback = callback
+            self.op_type = op_type
+            self.dtype = typename[1]
+
+        def test_dynamic_api(self):
+            paddle.disable_static()
+            a_complex_np = self.a_real_np + 1j * self.a_imag_np
+            b_complex_np = self.b_real_np + 1j * self.b_imag_np
+            a_complex = paddle.complex(
+                paddle.to_tensor(self.a_real_np),
+                paddle.to_tensor(self.a_imag_np),
+            )
+            b_complex = paddle.complex(
+                paddle.to_tensor(self.b_real_np),
+                paddle.to_tensor(self.b_imag_np),
+            )
+            c_np = self.callback(a_complex_np, b_complex_np)
+            c = self.callback(a_complex, b_complex)
+            np.testing.assert_allclose(c.numpy(), c_np)
+            paddle.enable_static()
+
+        def test_static_api(self):
+            pass
+
+    cls_name = f"{op_type}_{typename[1]}"
+    Cls.__name__ = cls_name
+    globals()[cls_name] = Cls
+
+
 for _type_name in {
     'float32',
     'float64',
@@ -80,6 +126,26 @@ for _type_name in {
     )
     create_test_class('equal', _type_name, lambda _a, _b: _a == _b, True)
     create_test_class('not_equal', _type_name, lambda _a, _b: _a != _b, True)
+
+for _type_name in {("float32", "complex64"), ("float64", "complex128")}:
+    create_unitest_class_with_complex(
+        'less_than', _type_name, lambda _a, _b: _a < _b, True
+    )
+    create_unitest_class_with_complex(
+        'less_equal', _type_name, lambda _a, _b: _a <= _b, True
+    )
+    create_unitest_class_with_complex(
+        'greater_than', _type_name, lambda _a, _b: _a > _b, True
+    )
+    create_unitest_class_with_complex(
+        'greater_equal', _type_name, lambda _a, _b: _a >= _b, True
+    )
+    create_unitest_class_with_complex(
+        'equal', _type_name, lambda _a, _b: _a == _b, True
+    )
+    create_unitest_class_with_complex(
+        'not_equal', _type_name, lambda _a, _b: _a != _b, True
+    )
 
 
 def create_paddle_case(op_type, callback):
