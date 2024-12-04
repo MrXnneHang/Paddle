@@ -96,7 +96,29 @@ def create_unitest_class_with_complex(
             paddle.enable_static()
 
         def test_static_api(self):
-            pass
+            paddle.enable_static()
+            with paddle.static.program_guard(paddle.static.Program()):
+                a_complex = paddle.static.data(
+                    name='a', shape=[10, 7], dtype=self.dtype
+                )
+                b_complex = paddle.static.data(
+                    name='b', shape=[10, 7], dtype=self.dtype
+                )
+                op = eval(f"paddle.{self.op_type}")
+                c = op(a_complex, b_complex)
+                exe = paddle.static.Executor(paddle.CPUPlace())
+                c_np = self.callback(
+                    self.a_real_np + 1j * self.a_imag_np,
+                    self.b_real_np + 1j * self.b_imag_np,
+                )
+                c_out = exe.run(
+                    feed={
+                        'a': self.a_real_np + 1j * self.a_imag_np,
+                        'b': self.b_real_np + 1j * self.b_imag_np,
+                    },
+                    fetch_list=[c],
+                )
+                np.testing.assert_allclose(c_out[0], c_np)
 
     cls_name = f"{op_type}_{typename[1]}"
     Cls.__name__ = cls_name
