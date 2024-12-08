@@ -14,6 +14,7 @@
 
 #pragma once
 #include <math.h>
+#include <iostream>
 #include "paddle/phi/common/complex.h"
 namespace phi {
 namespace funcs {
@@ -35,6 +36,7 @@ COMPARE_FUNCTOR(GreaterEqualFunctor, >=)
 template <typename InT, typename OutT = bool>
 struct EqualFunctor {
   HOSTDEVICE OutT operator()(const InT a, const InT b) const {
+    std::cout << "NotEqual泛化模板。\n";
     if (std::is_floating_point<InT>::value) {
       if (isinf(static_cast<float>(a)) || isinf(static_cast<float>(b)))
         return static_cast<OutT>(a == b);
@@ -51,14 +53,18 @@ template <typename T>
 struct EqualFunctor<phi::dtype::complex<T>> {
   HOSTDEVICE bool operator()(const phi::dtype::complex<T> a,
                              const phi::dtype::complex<T> b) const {
+    std::cout << "Equal偏特化模板\n";
     if (isnan(static_cast<T>(a.real)) || isnan(static_cast<T>(a.imag)) ||
         isnan(static_cast<T>(b.real)) || isnan(static_cast<T>(b.imag))) {
+      std::cout << "Equal偏特化:存在NAN\n";
       return static_cast<bool>(false);
     }
     if (isinf(static_cast<T>(a.real)) || isinf(static_cast<T>(a.imag)) ||
         isinf(static_cast<T>(b.real)) || isinf(static_cast<T>(b.imag))) {
+      std::cout << "Equal偏特化:存在INF\n";
       return static_cast<bool>(a.real == b.real && a.imag == b.imag);
     }
+    std::cout << "Equal偏特化:正常数.\n";
     return static_cast<bool>(fabs(static_cast<double>(a.real - b.real)) <
                                  1e-8 &&
                              fabs(static_cast<double>(a.imag - b.imag)) < 1e-8);
@@ -68,6 +74,7 @@ struct EqualFunctor<phi::dtype::complex<T>> {
 template <typename InT, typename OutT = bool>
 struct NotEqualFunctor {
   HOSTDEVICE bool operator()(const InT a, const InT b) const {
+    std::cout << "NotEqual泛化模板。\n";
     return !EqualFunctor<InT, OutT>()(a, b);
   }
 };
@@ -76,6 +83,7 @@ template <typename T>
 struct NotEqualFunctor<phi::dtype::complex<T>> {
   HOSTDEVICE bool operator()(const phi::dtype::complex<T> a,
                              const phi::dtype::complex<T> b) const {
+    std::cout << "NotEqual偏特化模板。\n";
     return !EqualFunctor<phi::dtype::complex<T>>()(a, b);
   }
 };
