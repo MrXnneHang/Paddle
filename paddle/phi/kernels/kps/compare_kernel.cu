@@ -192,3 +192,30 @@ PD_REGISTER_COMPLEX_COMPARE_KERNEL(equal, Equal)
 PD_REGISTER_COMPLEX_COMPARE_KERNEL(not_equal, NotEqual)
 
 #endif
+
+#ifdef PADDLE_WITH_CUDA
+
+#define PD_REGISTER_COMPLEX_COMPARE_KERNEL(name, func)    \
+  PD_REGISTER_KERNEL(name,                                \
+                     GPU,                                 \
+                     ALL_LAYOUT,                          \
+                     phi::func##Kernel,                   \
+                     bool,                                \
+                     int,                                 \
+                     uint8_t,                             \
+                     int8_t,                              \
+                     int16_t,                             \
+                     int64_t,                             \
+                     phi::dtype::complex<float>,          \
+                     phi::dtype::complex<double>,         \
+                     float,                               \
+                     double,                              \
+                     phi::dtype::float16,                 \
+                     phi::dtype::bfloat16) {              \
+    kernel->OutputAt(0).SetDataType(phi::DataType::BOOL); \
+  }
+
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(equal, Equal)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(not_equal, NotEqual)
+
+#endif
