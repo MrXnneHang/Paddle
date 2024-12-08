@@ -19,10 +19,10 @@ namespace phi {
 namespace funcs {
 
 #define COMPARE_FUNCTOR(func_name, op)                           \
-  template <typename InT, typename OutT = bool>                  \
+  template <typename InT, typename bool = bool>                  \
   struct func_name {                                             \
-    HOSTDEVICE OutT operator()(const InT a, const InT b) const { \
-      return static_cast<OutT>(a op b);                          \
+    HOSTDEVICE bool operator()(const InT a, const InT b) const { \
+      return static_cast<bool>(a op b);                          \
     }                                                            \
   };
 
@@ -32,31 +32,31 @@ COMPARE_FUNCTOR(GreaterThanFunctor, >)
 COMPARE_FUNCTOR(GreaterEqualFunctor, >=)
 #undef COMPARE_FUNCTOR
 
-template <typename InT, typename OutT = bool>
+template <typename InT>
 struct EqualFunctor {
-  HOSTDEVICE OutT operator()(const InT a, const InT b) const {
+  HOSTDEVICE bool operator()(const InT a, const InT b) const {
     if (std::is_floating_point<InT>::value) {
       if (isinf(static_cast<float>(a)) || isinf(static_cast<float>(b)))
-        return static_cast<OutT>(a == b);
+        return static_cast<bool>(a == b);
       if (isnan(static_cast<float>(a)) || isnan(static_cast<float>(b)))
-        return static_cast<OutT>(false);
-      return static_cast<OutT>(fabs(static_cast<double>(a - b)) < 1e-8);
+        return static_cast<bool>(false);
+      return static_cast<bool>(fabs(static_cast<double>(a - b)) < 1e-8);
     } else {
-      return static_cast<OutT>(a == b);
+      return static_cast<bool>(a == b);
     }
   }
 };
 
-template <typename T>
-struct EqualFunctor<phi::dtype::complex<T>> {
-  HOSTDEVICE bool operator()(const phi::dtype::complex<T> a,
-                             const phi::dtype::complex<T> b) const {
-    if (isnan(static_cast<T>(a.real)) || isnan(static_cast<T>(a.imag)) ||
-        isnan(static_cast<T>(b.real)) || isnan(static_cast<T>(b.imag))) {
+template <typename InT>
+struct EqualFunctor<phi::dtype::complex<InT>> {
+  HOSTDEVICE bool operator()(const phi::dtype::complex<InT> a,
+                             const phi::dtype::complex<InT> b) const {
+    if (isnan(static_cast<InT>(a.real)) || isnan(static_cast<InT>(a.imag)) ||
+        isnan(static_cast<InT>(b.real)) || isnan(static_cast<InT>(b.imag))) {
       return static_cast<bool>(false);
     }
-    if (isinf(static_cast<T>(a.real)) || isinf(static_cast<T>(a.imag)) ||
-        isinf(static_cast<T>(b.real)) || isinf(static_cast<T>(b.imag))) {
+    if (isinf(static_cast<InT>(a.real)) || isinf(static_cast<InT>(a.imag)) ||
+        isinf(static_cast<InT>(b.real)) || isinf(static_cast<InT>(b.imag))) {
       return static_cast<bool>(a.real == b.real && a.imag == b.imag);
     }
     return static_cast<bool>(fabs(static_cast<double>(a.real - b.real)) <
@@ -65,10 +65,10 @@ struct EqualFunctor<phi::dtype::complex<T>> {
   }
 };
 
-template <typename InT, typename OutT = bool>
+template <typename InT>
 struct NotEqualFunctor {
   HOSTDEVICE bool operator()(const InT a, const InT b) const {
-    return !EqualFunctor<InT, OutT>()(a, b);
+    return !EqualFunctor<InT, bool>()(a, b);
   }
 };
 
