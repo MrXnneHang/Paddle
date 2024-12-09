@@ -24,9 +24,9 @@ namespace phi {
 template <typename InT, typename OutT = InT>
 struct FullFunctor {
   OutT value;
-
   template <typename VType>
   explicit inline FullFunctor(VType val) {
+    printf("iinto gpu full functor");
     value = static_cast<OutT>(val);
   }
 
@@ -41,6 +41,7 @@ void FullKernel(const Context& dev_ctx,
                 const Scalar& val,
                 DataType dtype,
                 DenseTensor* out) {
+  printf("into FullKernel->");
   out->Resize(common::make_ddim(shape.GetData()));
   int64_t numel = out->numel();
   dev_ctx.template Alloc<T>(out);

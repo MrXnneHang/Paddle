@@ -109,7 +109,6 @@ void EqualAllKernel(const Context& ctx,
 #endif
 
 }  // namespace phi
-
 #ifdef PADDLE_WITH_XPU_KP
 PD_REGISTER_KERNEL(less_than, KPS, ALL_LAYOUT, phi::LessThanKernel, int) {
   kernel->OutputAt(0).SetDataType(phi::DataType::BOOL);
@@ -187,33 +186,6 @@ PD_REGISTER_COMPARE_KERNEL(less_than, LessThan)
 PD_REGISTER_COMPARE_KERNEL(less_equal, LessEqual)
 PD_REGISTER_COMPARE_KERNEL(greater_than, GreaterThan)
 PD_REGISTER_COMPARE_KERNEL(greater_equal, GreaterEqual)
-
-PD_REGISTER_COMPLEX_COMPARE_KERNEL(equal, Equal)
-PD_REGISTER_COMPLEX_COMPARE_KERNEL(not_equal, NotEqual)
-
-#endif
-
-#ifdef PADDLE_WITH_CUDA
-
-#define PD_REGISTER_COMPLEX_COMPARE_KERNEL(name, func)    \
-  PD_REGISTER_KERNEL(name,                                \
-                     GPU,                                 \
-                     ALL_LAYOUT,                          \
-                     phi::func##Kernel,                   \
-                     bool,                                \
-                     int,                                 \
-                     uint8_t,                             \
-                     int8_t,                              \
-                     int16_t,                             \
-                     int64_t,                             \
-                     phi::dtype::complex<float>,          \
-                     phi::dtype::complex<double>,         \
-                     float,                               \
-                     double,                              \
-                     phi::dtype::float16,                 \
-                     phi::dtype::bfloat16) {              \
-    kernel->OutputAt(0).SetDataType(phi::DataType::BOOL); \
-  }
 
 PD_REGISTER_COMPLEX_COMPARE_KERNEL(equal, Equal)
 PD_REGISTER_COMPLEX_COMPARE_KERNEL(not_equal, NotEqual)
