@@ -25,6 +25,7 @@ namespace phi {
 
 template <typename T, typename Context>
 void FullValue(const Context& dev_ctx, DenseTensor* tensor, T val) {
+  printf("into sparce/cpu/FullValue\n");
   dev_ctx.template Alloc<T>(tensor);
   auto t = phi::EigenVector<T>::Flatten(*tensor);
   t.device(*dev_ctx.eigen_device()) = t.constant(val);

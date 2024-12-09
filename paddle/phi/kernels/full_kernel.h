@@ -62,6 +62,7 @@ void Full(const Context& dev_ctx,
           const IntArray& shape,
           const Scalar& val,
           DenseTensor* out) {
+  printf("into Full_->");
   FullKernel<T, Context>(
       dev_ctx, shape, val, phi::CppTypeToDataType<T>::Type(), out);
 }
@@ -70,6 +71,7 @@ template <typename T, typename Context>
 DenseTensor Full(const Context& dev_ctx,
                  const IntArray& shape,
                  const Scalar& val) {
+  printf("into Full->");
   DenseTensor dense_out;
   MetaTensor meta_out(&dense_out);
   DataType dtype = phi::CppTypeToDataType<T>::Type();
