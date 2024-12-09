@@ -26,11 +26,12 @@ struct FullFunctor {
   OutT value;
   template <typename VType>
   explicit inline FullFunctor(VType val) {
-    VLOG(10) << "iinto gpu full functor";
+    printf("into gpu FullFunctor->");
     value = static_cast<OutT>(val);
   }
 
   __device__ __forceinline__ OutT operator()() const {
+    printf("into gpu FullFunctor->");
     return static_cast<OutT>(value);
   }
 };
@@ -41,7 +42,7 @@ void FullKernel(const Context& dev_ctx,
                 const Scalar& val,
                 DataType dtype,
                 DenseTensor* out) {
-  VLOG(10) << "into gpu FullKernel->";
+  printf("into gpu FullKernel->");
   out->Resize(common::make_ddim(shape.GetData()));
   int64_t numel = out->numel();
   dev_ctx.template Alloc<T>(out);
