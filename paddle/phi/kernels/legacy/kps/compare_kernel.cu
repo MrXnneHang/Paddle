@@ -180,3 +180,5 @@ PD_REGISTER_COMPARE_RAW_KERNEL(greater_than, GreaterThan)
 PD_REGISTER_COMPARE_RAW_KERNEL(greater_equal, GreaterEqual)
 PD_REGISTER_COMPARE_RAW_KERNEL(equal, Equal)
 PD_REGISTER_COMPARE_RAW_KERNEL(not_equal, NotEqual)
+
+#endif
