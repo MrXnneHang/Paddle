@@ -104,7 +104,7 @@ PD_REGISTER_KERNEL(equal_all,
   kernel->OutputAt(0).SetDataType(phi::DataType::BOOL);
 }
 
-#define PD_REGISTER_COMPARE_KERNEL(name, func)            \
+#define PD_REGISTER_COMPLEX_COMPARE_KERNEL(name, func)    \
   PD_REGISTER_KERNEL(name,                                \
                      CPU,                                 \
                      ALL_LAYOUT,                          \
@@ -124,9 +124,9 @@ PD_REGISTER_KERNEL(equal_all,
     kernel->OutputAt(0).SetDataType(phi::DataType::BOOL); \
   }
 
-PD_REGISTER_COMPARE_KERNEL(less_than, LessThan)
-PD_REGISTER_COMPARE_KERNEL(less_equal, LessEqual)
-PD_REGISTER_COMPARE_KERNEL(greater_than, GreaterThan)
-PD_REGISTER_COMPARE_KERNEL(greater_equal, GreaterEqual)
-PD_REGISTER_COMPARE_KERNEL(equal, Equal)
-PD_REGISTER_COMPARE_KERNEL(not_equal, NotEqual)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(less_than, LessThan)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(less_equal, LessEqual)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(greater_than, GreaterThan)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(greater_equal, GreaterEqual)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(equal, Equal)
+PD_REGISTER_COMPLEX_COMPARE_KERNEL(not_equal, NotEqual)
