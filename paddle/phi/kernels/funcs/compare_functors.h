@@ -22,7 +22,8 @@ namespace funcs {
   template <typename InT, typename OutT = bool>                  \
   struct func_name {                                             \
     HOSTDEVICE OutT operator()(const InT a, const InT b) const { \
-      return static_cast<OutT>(a op b);                          \
+      printf("Compare泛化");                                     \
+      return static_cast<OutT>(true);                            \
     }                                                            \
   };
 
