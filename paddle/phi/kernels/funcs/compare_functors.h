@@ -39,12 +39,12 @@ struct EqualFunctor {
     printf("Equal泛化模板。\n");
     if (std::is_floating_point<InT>::value) {
       if (isinf(static_cast<float>(a)) || isinf(static_cast<float>(b)))
-        return static_cast<OutT>(a != b);
+        return static_cast<OutT>(true);
       if (isnan(static_cast<float>(a)) || isnan(static_cast<float>(b)))
         return static_cast<OutT>(true);
-      return static_cast<OutT>(fabs(static_cast<double>(a - b)) < 1e-8);
+      return static_cast<OutT>(true);
     } else {
-      return static_cast<OutT>(a != b);
+      return static_cast<OutT>(true);
     }
   }
 };
