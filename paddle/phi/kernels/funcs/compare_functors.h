@@ -35,13 +35,23 @@ COMPARE_FUNCTOR(GreaterEqualFunctor, >=)
 template <typename InT, typename OutT = bool>
 struct EqualFunctor {
   HOSTDEVICE OutT operator()(const InT a, const InT b) const {
+    if (true) {
+      printf("泛化模板->");
+    }
     if (std::is_floating_point<InT>::value) {
-      if (isinf(static_cast<float>(a)) || isinf(static_cast<float>(b)))
+      if (isinf(static_cast<float>(a)) || isinf(static_cast<float>(b))) {
+        printf("INF\n");
         return static_cast<OutT>(a == b);
-      if (isnan(static_cast<float>(a)) || isnan(static_cast<float>(b)))
+      }
+      if (isnan(static_cast<float>(a)) || isnan(static_cast<float>(b))) {
+        printf("NAN\n");
         return static_cast<OutT>(false);
-      return static_cast<OutT>(fabs(static_cast<double>(a - b)) < 1e-8);
+      } else {
+        printf("NORMAL FLOAT");
+        return static_cast<OutT>(fabs(static_cast<double>(a - b)) < 1e-8);
+      }
     } else {
+      printf("NORMAL INT\n");
       return static_cast<OutT>(a == b);
     }
   }
@@ -51,17 +61,24 @@ template <typename T>
 struct EqualFunctor<phi::dtype::complex<T>> {
   HOSTDEVICE bool operator()(const phi::dtype::complex<T> a,
                              const phi::dtype::complex<T> b) const {
+    if (true) {
+      printf("特化模板->");
+    }
     if (isnan(static_cast<T>(a.real)) || isnan(static_cast<T>(a.imag)) ||
         isnan(static_cast<T>(b.real)) || isnan(static_cast<T>(b.imag))) {
+      printf("NAN\n");
       return static_cast<bool>(false);
     }
     if (isinf(static_cast<T>(a.real)) || isinf(static_cast<T>(a.imag)) ||
         isinf(static_cast<T>(b.real)) || isinf(static_cast<T>(b.imag))) {
+      printf("INF\n");
       return static_cast<bool>(a.real == b.real && a.imag == b.imag);
+    } else {
+      printf("NORMAL\n");
+      return static_cast<bool>(
+          fabs(static_cast<double>(a.real - b.real)) < 1e-8 &&
+          fabs(static_cast<double>(a.imag - b.imag)) < 1e-8);
     }
-    return static_cast<bool>(fabs(static_cast<double>(a.real - b.real)) <
-                                 1e-8 &&
-                             fabs(static_cast<double>(a.imag - b.imag)) < 1e-8);
   }
 };
 
