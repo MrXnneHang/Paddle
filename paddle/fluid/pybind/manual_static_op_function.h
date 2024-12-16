@@ -138,68 +138,116 @@ static PyObject *static_api_set_persistable_value(PyObject *self,
   }
 }
 
-PyObject *static_api_full(PyObject *self, PyObject *args, PyObject *kwargs) {
-  try {
-    VLOG(6) << "Add full op into program";
-    VLOG(8) << "args count: " << (PyTuple_Size(args) / 2);
+// PyObject *static_api_full(PyObject *self, PyObject *args, PyObject *kwargs) {
+//   try {
+//     VLOG(6) << "Add full op into program";
+//     VLOG(8) << "args count: " << (PyTuple_Size(args) / 2);
 
-    // Parse Attributes
-    PyObject *shape_obj = PyTuple_GET_ITEM(args, 0);
-    PyObject *value_obj = PyTuple_GET_ITEM(args, 1);
-    PyObject *dtype_obj = PyTuple_GET_ITEM(args, 2);
-    PyObject *place_obj = PyTuple_GET_ITEM(args, 3);
+//     // Parse Attributes
+//     PyObject *shape_obj = PyTuple_GET_ITEM(args, 0);
+//     PyObject *value_obj = PyTuple_GET_ITEM(args, 1);
+//     PyObject *dtype_obj = PyTuple_GET_ITEM(args, 2);
+//     PyObject *place_obj = PyTuple_GET_ITEM(args, 3);
 
-    phi::DataType dtype = CastPyArg2DataTypeDirectly(dtype_obj, "full", 2);
-    Place place = CastPyArg2Place(place_obj, "full", 3);
+//     phi::DataType dtype = CastPyArg2DataTypeDirectly(dtype_obj, "full", 2);
+//     Place place = CastPyArg2Place(place_obj, "full", 3);
 
-    if (!PyObject_CheckIRValue(shape_obj) &&
-        !PyObject_CheckIRVectorOfValue(shape_obj) &&
-        !PyObject_CheckIRValue(value_obj)) {
-      std::vector<int64_t> shape = CastPyArg2Longs(shape_obj, "full", 0);
-      double value = CastPyArg2Double(value_obj, "full", 1);
-      CallStackRecorder callstack_recoder("full");
-      callstack_recoder.Record();
-      auto static_api_out = paddle::dialect::full(shape, value, dtype, place);
-      callstack_recoder.AttachToOps();
-      return ToPyObject(static_api_out);
-    } else {
-      pir::Value shape, value;
+//     if (!PyObject_CheckIRValue(shape_obj) &&
+//         !PyObject_CheckIRVectorOfValue(shape_obj) &&
+//         !PyObject_CheckIRValue(value_obj)) {
+//       std::vector<int64_t> shape = CastPyArg2Longs(shape_obj, "full", 0);
+//       if (PyComplex_Check(value_obj)) {
+//         phi::dtype::complex<double> complex_value =
+//             CastPyArg2Complex(value_obj, "full", 1);
 
-      if (PyObject_CheckIRValue(shape_obj)) {
-        shape = CastPyArg2Value(shape_obj, "full", 0, false);
-      } else if (PyObject_CheckIRVectorOfValue(shape_obj)) {
-        std::vector<pir::Value> shape_tmp =
-            CastPyArg2VectorOfValue(shape_obj, "full", 0, false);
-        shape = paddle::dialect::stack(shape_tmp, 0);
-      } else {
-        std::vector<int64_t> shape_tmp = CastPyArg2Longs(shape_obj, "full", 0);
-        shape = paddle::dialect::full_int_array(
-            shape_tmp, phi::DataType::INT64, phi::CPUPlace());
-      }
+//         CallStackRecorder callstack_recoder("full");
+//         callstack_recoder.Record();
+//         pir::Value real_tmp = paddle::dialect::full(std::vector<int64_t>{1},
+//                                                     complex_value.real,
+//                                                     dtype,
+//                                                     place);
+//         callstack_recoder.AttachToOps();
 
-      if (PyObject_CheckIRValue(value_obj)) {
-        value = CastPyArg2Value(value_obj, "full", 1, false);
-      } else {
-        double value_tmp = CastPyArg2Double(value_obj, "full", 1);
-        value = paddle::dialect::full(std::vector<int64_t>{1},
-                                      value_tmp,
-                                      phi::DataType::FLOAT32,
-                                      phi::CPUPlace());
-      }
+//         CallStackRecorder callstack_recoder("full");
+//         callstack_recoder.Record();
+//         pir::Value imag_tmp = paddle::dialect::full(std::vector<int64_t>{1},
+//                                                     complex_value.imag,
+//                                                     dtype,
+//                                                     place);
+//         callstack_recoder.AttachToOps();
 
-      CallStackRecorder callstack_recoder("full_with_tensor");
-      callstack_recoder.Record();
-      auto static_api_out =
-          paddle::dialect::full_with_tensor(value, shape, dtype);
-      callstack_recoder.AttachToOps();
+//         CallStackRecorder callstack_recoder("complex");
+//         callstack_recoder.Record();
+//         pir::Value value = paddle::dialect::complex(real_tmp,imag_tmp);
+//         callstack_recoder.AttachToOps();
 
-      return ToPyObject(static_api_out);
-    }
-  } catch (...) {
-    ThrowExceptionToPython(std::current_exception());
-    return nullptr;
-  }
-}
+//         CallStackRecorder callstack_recoder("full");
+//         callstack_recoder.Record();
+//         auto static_api_out = paddle::dialect::full(shape, value, dtype,
+//         place); callstack_recoder.AttachToOps(); return
+//         ToPyObject(static_api_out);
+//       } else {
+//         double value = CastPyArg2Double(value_obj, "full", 1);
+//         CallStackRecorder callstack_recoder("full");
+//         callstack_recoder.Record();
+//         auto static_api_out = paddle::dialect::full(shape, value, dtype,
+//         place); callstack_recoder.AttachToOps(); return
+//         ToPyObject(static_api_out);
+//       }
+//     } else {
+//       pir::Value shape, value;
+
+//       if (PyObject_CheckIRValue(shape_obj)) {
+//         shape = CastPyArg2Value(shape_obj, "full", 0, false);
+//       } else if (PyObject_CheckIRVectorOfValue(shape_obj)) {
+//         std::vector<pir::Value> shape_tmp =
+//             CastPyArg2VectorOfValue(shape_obj, "full", 0, false);
+//         shape = paddle::dialect::stack(shape_tmp, 0);
+//       } else {
+//         std::vector<int64_t> shape_tmp = CastPyArg2Longs(shape_obj, "full",
+//         0); shape = paddle::dialect::full_int_array(
+//             shape_tmp, phi::DataType::INT64, phi::CPUPlace());
+//       }
+
+//       if (PyObject_CheckIRValue(value_obj)) {
+//         value = CastPyArg2Value(value_obj, "full", 1, false);
+//       } else {
+//         if (PyComplex_Check(value_obj)) {
+//           phi::dtype::complex<float> complex_value =
+//               CastPyArg2Complex(value_obj, "full", 1);
+//           pir::Value real_tmp =
+//           paddle::dialect::full(std::vector<int64_t>{1},
+//                                                      complex_value.real,
+//                                                      phi::DataType::FLOAT32,
+//                                                      phi::CPUPlace());
+//           pir::Value imag_tmp =
+//           paddle::dialect::full(std::vector<int64_t>{1},
+//                                                      complex_value.imag,
+//                                                      phi::DataType::FLOAT32,
+//                                                      phi::CPUPlace());
+//           value = paddle::dialect::complex(real_tmp,imag_tmp)
+
+//         } else {
+//           double value_tmp = CastPyArg2Double(value_obj, "full", 1);
+//           value = paddle::dialect::full(std::vector<int64_t>{1},
+//                                         value_tmp,
+//                                         phi::DataType::FLOAT32,
+//                                         phi::CPUPlace());
+//         }
+//       }
+//       CallStackRecorder callstack_recoder("full_with_tensor");
+//       callstack_recoder.Record();
+//       auto static_api_out =
+//           paddle::dialect::full_with_tensor(value, shape, dtype);
+//       callstack_recoder.AttachToOps();
+
+//       return ToPyObject(static_api_out);
+//     }
+//   } catch (...) {
+//     ThrowExceptionToPython(std::current_exception());
+//     return nullptr;
+//   }
+// }
 
 static PyObject *static_api_create_array(PyObject *self,
                                          PyObject *args,

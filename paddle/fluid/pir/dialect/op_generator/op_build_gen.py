@@ -281,6 +281,8 @@ mutable_attribute_phi_type_maps = {
     'std::vector<int64_t>': 'phi::DataType::INT64',
     'const std::vector<int64_t>&': 'phi::DataType::INT64',
     'bool': 'phi::DataType::BOOL',
+    'complex64': 'phi::DataType::COMPLEX64',
+    'complex128': 'phi::DataType::COMPLEX128',
 }
 
 

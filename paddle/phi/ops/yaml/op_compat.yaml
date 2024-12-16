@@ -1422,6 +1422,10 @@
     out : Out
   extra :
     attrs : [bool use_mkldnn = false]
+  scalar:
+    value:
+      data_type: double
+      support_tensor: true
 
 - op : full_like (fill_any_like)
   inputs :
