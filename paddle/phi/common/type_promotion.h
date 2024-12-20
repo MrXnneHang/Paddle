@@ -222,6 +222,13 @@ inline bool NeedTypePromotion(
     }
 #endif
 
+    if ((op_name == "less_than" || op_name == "less_equal" ||
+         op_name == "equal" || op_name == "greater_than" ||
+         op_name == "greater_equal" || op_name == "not_equal") &&
+        (is_support_int(x_dtype) && is_support_int(y_dtype))) {
+      { return true; }
+    }
+
     if ((is_support_float(x_dtype) && is_support_float(y_dtype)) ||
         (is_support_complex(x_dtype) || is_support_complex(y_dtype))) {
       return true;
